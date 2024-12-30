@@ -426,24 +426,41 @@ function shuffleChar(str, iterations) {
   }
   let count = iterations;
   let currentStr = str;
-  const seen = new Set();
+  const memory = new Map();
+  let period = 0;
   while (count > 0) {
+    if (memory.has(currentStr)) {
+      period = count - memory.get(currentStr);
+      count %= period;
+      break;
+    }
+
+    memory.set(currentStr, count);
     let start = '';
     let end = '';
-    for (let i = 0; i < str.length; i += 1) {
+
+    for (let i = 0; i < currentStr.length; i += 1) {
       if (i % 2 === 0) {
         start += currentStr[i];
       } else {
         end += currentStr[i];
       }
     }
+    currentStr = start + end;
+    count -= 1;
+  }
+  for (let i = 0; i < count; i += 1) {
+    let start = '';
+    let end = '';
+    for (let j = 0; j < str.length; j += 1) {
+      if (j % 2 === 0) {
+        start += currentStr[j];
+      } else {
+        end += currentStr[j];
+      }
+    }
 
     currentStr = start + end;
-    if (seen.has(currentStr)) {
-      break;
-    }
-    seen.add(currentStr);
-    count -= 1;
   }
 
   return currentStr;
